@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-
+using TMPro;
 
 public class PlayerScript : MonoBehaviour
 {
@@ -13,6 +13,8 @@ public class PlayerScript : MonoBehaviour
       public Text score;
 
     private int scoreValue = 0;
+    public Text livesText;
+    private int livesValue = 3;
 
 
     // Start is called before the first frame update
@@ -20,7 +22,11 @@ public class PlayerScript : MonoBehaviour
     {
         rd2d = GetComponent<Rigidbody2D>();
          score.text = scoreValue.ToString();
+
+         rd2d = GetComponent<Rigidbody2D>();
+        livesText.text =livesValue.ToString();
     }
+    
 
     // Update is called once per frame
     void FixedUpdate()
@@ -38,6 +44,12 @@ public class PlayerScript : MonoBehaviour
             score.text = scoreValue.ToString();
             Destroy(collision.collider.gameObject);
         }
+      if (collision.collider.tag == "Enemy")
+        {
+            livesValue -= 1;
+            livesText.text = livesValue.ToString();
+            Destroy(collision.collider.gameObject);
+        }
 
     }
 
@@ -52,4 +64,5 @@ public class PlayerScript : MonoBehaviour
             }
         }
     }
+
 }
