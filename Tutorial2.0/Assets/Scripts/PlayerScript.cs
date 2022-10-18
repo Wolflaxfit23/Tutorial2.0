@@ -11,28 +11,68 @@ public class PlayerScript : MonoBehaviour
       public float speed;
 
       public Text score;
+      public Text livesText;
+    private int scoreValue;
+    private int livesValue;
 
-    private int scoreValue = 0;
-    public Text livesText;
-    private int livesValue = 3;
+      public GameObject WinTextObject;
+      public GameObject LoseTextObject;
 
-
+      public AudioClip musicClipOne;
+      public AudioClip musicClipTwo;
+      public AudioSource musicSource;
+      public Animator AnimController;
     // Start is called before the first frame update
     void Start()
     {
         rd2d = GetComponent<Rigidbody2D>();
-         score.text = scoreValue.ToString();
+         scoreValue = 0;
 
          rd2d = GetComponent<Rigidbody2D>();
-        livesText.text =livesValue.ToString();
-    }
-    
+        livesValue = 3;
 
+        SetCountText();
+        WinTextObject.SetActive(false);
+
+        SetCountText();
+        LoseTextObject.SetActive(false);
+
+         musicSource.clip = musicClipOne;
+         musicSource.Play();
+         AnimController = GetComponent<Animator>();
+
+    }
+    void Update ()
+    {
+        SetCountText();
+    }
+    void SetCountText()
+    {
+    score.text = "Score: " + scoreValue.ToString();
+        if (scoreValue == 8)
+        {
+            WinTextObject.SetActive(true);
+            Destroy(gameObject);
+            musicSource.Stop();
+            musicSource.clip = musicClipTwo;
+            musicSource.Play();
+
+        }
+
+        livesText.text = "Lives: " + livesValue.ToString();
+        if (livesValue == 0)
+        {
+            LoseTextObject.SetActive(true);
+            Destroy(gameObject);
+        }
+    }
     // Update is called once per frame
     void FixedUpdate()
     {
         float hozMovement = Input.GetAxis("Horizontal");
         float vertMovement = Input.GetAxis("Vertical");
+        AnimController.SetFloat("move x",hozMovement) ;
+        AnimController.SetFloat("move y",vertMovement) ;
         rd2d.AddForce(new Vector2(hozMovement * speed, vertMovement * speed));
     }
 
@@ -43,6 +83,10 @@ public class PlayerScript : MonoBehaviour
             scoreValue += 1;
             score.text = scoreValue.ToString();
             Destroy(collision.collider.gameObject);
+            if (scoreValue == 4)
+            {
+                transform.position = new Vector3(43f, 0f, 0f);
+            }
         }
       if (collision.collider.tag == "Enemy")
         {
@@ -50,7 +94,7 @@ public class PlayerScript : MonoBehaviour
             livesText.text = livesValue.ToString();
             Destroy(collision.collider.gameObject);
         }
-
+        
     }
 
     private void OnCollisionStay2D(Collision2D collision)
